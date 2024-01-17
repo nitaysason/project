@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Library Management System</h1>
+        <div id="bookSection">
+            <h2>Books</h2>
+            <ul id="bookList"></ul>
+            <div id="addBookForm">
+                <h3>Add New Book</h3>
+                <label for="title">Title:</label>
+                <input type="text" id="title" required>
+                <label for="author">Author:</label>
+                <input type="text" id="author" required>
+                <!-- <label for="userId">User ID (Admin only):</label> -->
+                <!-- <input type="number" id="userId"> -->
+                <button onclick="addBook()">Add Book</button>
+            </div>
+        </div>
+        <div id="loginForm">
+            <h2>Login</h2>
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            <button onclick="login()">Login</button>
+            <p onclick="showRegistrationForm()">Register</p>
+        </div>
+        <div id="registrationForm" style="display: none;">
+            <h2>Register</h2>
+            <label for="regUsername">Username:</label>
+            <input type="text" id="regUsername" required>
+            <label for="regPassword">Password:</label>
+            <input type="password" id="regPassword" required>
+            <button onclick="register()">Register</button>
+            <p onclick="showLoginForm()">Back to Login</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
