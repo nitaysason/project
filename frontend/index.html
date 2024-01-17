@@ -20,8 +20,6 @@
                 <input type="text" id="title" required>
                 <label for="author">Author:</label>
                 <input type="text" id="author" required>
-                <!-- <label for="userId">User ID (Admin only):</label> -->
-                <!-- <input type="number" id="userId"> -->
                 <button onclick="addBook()">Add Book</button>
             </div>
         </div>
@@ -32,7 +30,8 @@
             <label for="password">Password:</label>
             <input type="password" id="password" required>
             <button onclick="login()">Login</button>
-            <p onclick="showRegistrationForm()">Register</p>
+            <button id="registerButton" onclick="showRegistrationForm()" style="cursor: pointer; padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 5px;">Register</button>
+
         </div>
         <div id="registrationForm" style="display: none;">
             <h2>Register</h2>
@@ -41,7 +40,8 @@
             <label for="regPassword">Password:</label>
             <input type="password" id="regPassword" required>
             <button onclick="register()">Register</button>
-            <p onclick="showLoginForm()">Back to Login</p>
+            <button id="backToLoginButton" onclick="showLoginForm()" style="cursor: pointer; padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 5px;">Back to Login</button>
+
         </div>
     </div>
 

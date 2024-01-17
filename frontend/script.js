@@ -76,22 +76,34 @@ function fetchBooks() {
         });
 }
 
-function addBook() {
-    const title = document.getElementById('title').value;
-    const author = document.getElementById('author').value;
-    const userId = document.getElementById('userId').value;
+async function addBook() {
+    try {
+        const titleElement = document.getElementById('title');
+        const authorElement = document.getElementById('author');
+        const userIdElement = document.getElementById('userId');
 
-    axios.post(`${baseUrl}/books`, { title, author, userId })
-        .then(response => {
-            console.log(response.data.message);
-            document.getElementById('title').value = '';
-            document.getElementById('author').value = '';
-            document.getElementById('userId').value = '';
-            fetchBooks();
-        })
-        .catch(error => {
-            console.error('Error adding book:', error.response ? error.response.data.message : error.message);
-        });
+        // Check if elements exist
+        if (!titleElement || !authorElement) {
+            console.error('Title and author elements are required.');
+            return;
+        }
+
+        const title = titleElement.value;
+        const author = authorElement.value;
+
+        // Optional: Check if userId is present and is a number
+        const userId = userIdElement ? userIdElement.value : null;
+        if (userId !== null && isNaN(userId)) {
+            console.error('User ID must be a valid number.');
+            return;
+        }
+
+        const response = await axios.post(`${baseUrl}/books`, { title, author, user_id: userId });
+        console.log(response.data.message);
+        fetchBooks();
+    } catch (error) {
+        console.error('Error adding book:', error.response ? error.response.data.message : error.message);
+    }
 }
 
 function updateBook(bookId) {
