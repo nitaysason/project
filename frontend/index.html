@@ -11,6 +11,8 @@
 <body>
     <div class="container">
         <h1>Library Management System</h1>
+
+        <!-- Book Section -->
         <div id="bookSection">
             <h2>Books</h2>
             <ul id="bookList"></ul>
@@ -24,6 +26,7 @@
             </div>
         </div>
 
+        <!-- Login Form -->
         <div id="loginForm">
             <h2>Login</h2>
             <label for="username">Username:</label>
@@ -31,8 +34,10 @@
             <label for="password">Password:</label>
             <input type="password" id="password" required>
             <button onclick="login()">Login</button>
-            <button id="registerButton" onclick="showRegistrationForm()" style="cursor: pointer; padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 5px;">Register</button>
+            <button id="registerButton" onclick="showRegistrationForm()">Register</button>
         </div>
+
+        <!-- Registration Form -->
         <div id="registrationForm" style="display: none;">
             <h2>Register</h2>
             <label for="regUsername">Username:</label>
@@ -40,13 +45,15 @@
             <label for="regPassword">Password:</label>
             <input type="password" id="regPassword" required>
             <button onclick="register()">Register</button>
-            <button id="backToLoginButton" onclick="showLoginForm()" style="cursor: pointer; padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 5px;">Back to Login</button>
+            <button id="backToLoginButton" onclick="showLoginForm()">Back to Login</button>
         </div>
 
-        <!-- HTML for taking and returning a book -->
+        <!-- User Actions (Take/Return Book) -->
         <div id="userActions" style="display: none;">
-            <button onclick="takeBook()">Take Book</button>
-            <button onclick="returnBook()">Return Book</button>
+            <!-- Replace "1" with the actual book ID you want to take -->
+            <button onclick="takeBook(3)">Take Book</button>
+            <!-- Replace "1" with the actual book ID you want to return -->
+            <button onclick="returnBook(1)">Return Book</button>
         </div>
     </div>
 

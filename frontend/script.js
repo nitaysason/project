@@ -156,15 +156,27 @@ function deleteBook(bookId) {
 }
 
 // JavaScript for taking a book
-function takeBook() {
-    // Implement the logic for taking a book
-    console.log('Take Book button clicked');
+function takeBook(bookId) {
+    axios.post(`${baseUrl}/take_book/${bookId}`)
+        .then(response => {
+            console.log(response.data.message);
+            fetchBooks();
+        })
+        .catch(error => {
+            console.error('Error taking book:', error.response ? error.response.data.message : error.message);
+        });
 }
 
 // JavaScript for returning a book
-function returnBook() {
-    // Implement the logic for returning a book
-    console.log('Return Book button clicked');
+function returnBook(bookId) {
+    axios.post(`${baseUrl}/return_book/${bookId}`)
+        .then(response => {
+            console.log(response.data.message);
+            fetchBooks();
+        })
+        .catch(error => {
+            console.error('Error returning book:', error.response ? error.response.data.message : error.message);
+        });
 }
 
 // Attach event listeners to the forms

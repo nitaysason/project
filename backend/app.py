@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -31,6 +32,13 @@ class Book(db.Model):
     title = db.Column(db.String(100), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    transaction_type = db.Column(db.String(10), nullable=False)  # 'take' or 'return'
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 # Create tables
 with app.app_context():
@@ -129,24 +137,35 @@ def delete_book(book_id):
 # Modify these routes to remove @jwt_required() decorator
 
 @app.route('/take_book/<int:book_id>', methods=['POST'])
+@jwt_required()
 def take_book(book_id):
+    
     current_user = get_jwt_identity()
     user = User.query.get(current_user)
     book = Book.query.get(book_id)
 
     # Check if the user is not a librarian and the book exists
     if not user.is_librarian and book:
-        # You may want to add additional checks here, such as checking if the book is available
+        # Check if the book is available
+        if book.user_id is None:
+            # Assign the book to the current user
+            book.user_id = current_user
 
-        # Assign the book to the current user
-        book.user_id = current_user
-        db.session.commit()
-        
-        return jsonify({"message": "Book taken successfully"}), 200
+            # Record the transaction
+            new_transaction = Transaction(book_id=book_id, user_id=current_user, transaction_type='take')
+            db.session.add(new_transaction)
+
+            db.session.commit()
+
+            return jsonify({"message": "Book taken successfully"}), 200
+        else:
+            return jsonify({"message": "Book is already taken"}), 400
     else:
         return jsonify({"message": "Book not found or unauthorized"}), 404
 
+
 @app.route('/return_book/<int:book_id>', methods=['POST'])
+@jwt_required()
 def return_book(book_id):
     current_user = get_jwt_identity()
     user = User.query.get(current_user)
@@ -158,14 +177,18 @@ def return_book(book_id):
         if book.user_id == current_user:
             # Return the book (set user_id to None)
             book.user_id = None
+
+            # Record the transaction
+            new_transaction = Transaction(book_id=book_id, user_id=current_user, transaction_type='return')
+            db.session.add(new_transaction)
+
             db.session.commit()
-            
+
             return jsonify({"message": "Book returned successfully"}), 200
         else:
             return jsonify({"message": "You do not have this book"}), 401
     else:
         return jsonify({"message": "Book not found or unauthorized"}), 404
-
 
 if __name__ == '__main__':
     app.run(debug=True)
