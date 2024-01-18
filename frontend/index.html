@@ -23,6 +23,7 @@
                 <button onclick="addBook()">Add Book</button>
             </div>
         </div>
+        
         <div id="loginForm">
             <h2>Login</h2>
             <label for="username">Username:</label>
@@ -31,7 +32,6 @@
             <input type="password" id="password" required>
             <button onclick="login()">Login</button>
             <button id="registerButton" onclick="showRegistrationForm()" style="cursor: pointer; padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 5px;">Register</button>
-
         </div>
         <div id="registrationForm" style="display: none;">
             <h2>Register</h2>
@@ -41,12 +41,43 @@
             <input type="password" id="regPassword" required>
             <button onclick="register()">Register</button>
             <button id="backToLoginButton" onclick="showLoginForm()" style="cursor: pointer; padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 5px;">Back to Login</button>
+        </div>
 
+        <!-- HTML for taking and returning a book -->
+        <div id="userActions" style="display: none;">
+            <button onclick="takeBook()">Take Book</button>
+            <button onclick="returnBook()">Return Book</button>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="script.js"></script>
+
+    <script>
+        // Attach event listeners to the forms
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            login();
+        });
+
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            register();
+        });
+
+        document.getElementById('addBookForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            addBook();
+        });
+
+        // Fetch and display books on page load if authenticated
+        if (authToken) {
+            showBookSection();
+            fetchBooks();
+        } else {
+            showLoginForm();
+        }
+    </script>
 </body>
 
 </html>

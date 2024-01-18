@@ -1,5 +1,6 @@
 const baseUrl = 'http://localhost:5000'; // Update with your Flask app URL
 let authToken = null;
+let isLibrarian = false;
 
 function setAuthToken(token) {
     authToken = token;
@@ -18,14 +19,37 @@ function showRegistrationForm() {
     document.getElementById('bookSection').style.display = 'none';
 }
 
+function showBookSection() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registrationForm').style.display = 'none';
+    document.getElementById('bookSection').style.display = 'block';
+
+    if (isLibrarian) {
+        document.getElementById('userActions').style.display = 'none';
+        document.getElementById('addBookForm').style.display = 'none';
+    } else {
+        const updateButtons = document.querySelectorAll('.update-button');
+        const deleteButtons = document.querySelectorAll('.delete-button');
+
+        updateButtons.forEach(button => {
+            button.style.display = 'none';
+        });
+
+        deleteButtons.forEach(button => {
+            button.style.display = 'none';
+        });
+    }
+}
+
 function login() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
     axios.post(`${baseUrl}/login`, { username, password })
         .then(response => {
-            const { access_token } = response.data;
+            const { access_token, is_librarian } = response.data;
             setAuthToken(access_token);
+            isLibrarian = is_librarian;
             showBookSection();
             fetchBooks();
         })
@@ -47,12 +71,6 @@ async function register() {
     }
 }
 
-function showBookSection() {
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('registrationForm').style.display = 'none';
-    document.getElementById('bookSection').style.display = 'block';
-}
-
 function fetchBooks() {
     axios.get(`${baseUrl}/books`)
         .then(response => {
@@ -65,8 +83,8 @@ function fetchBooks() {
                     <strong>ID:</strong> ${book.id} |
                     <strong>Title:</strong> ${book.title} |
                     <strong>Author:</strong> ${book.author} |
-                    <button onclick="updateBook(${book.id})">Update</button> |
-                    <button onclick="deleteBook(${book.id})">Delete</button>
+                    ${isLibrarian ? '' : '<button class="update-button" onclick="updateBook(' + book.id + ')">Update</button>'} |
+                    ${isLibrarian ? '' : '<button class="delete-button" onclick="deleteBook(' + book.id + ')">Delete</button>'}
                 `;
                 bookList.appendChild(listItem);
             });
@@ -80,9 +98,7 @@ async function addBook() {
     try {
         const titleElement = document.getElementById('title');
         const authorElement = document.getElementById('author');
-        const userIdElement = document.getElementById('userId');
 
-        // Check if elements exist
         if (!titleElement || !authorElement) {
             console.error('Title and author elements are required.');
             return;
@@ -91,14 +107,7 @@ async function addBook() {
         const title = titleElement.value;
         const author = authorElement.value;
 
-        // Optional: Check if userId is present and is a number
-        const userId = userIdElement ? userIdElement.value : null;
-        if (userId !== null && isNaN(userId)) {
-            console.error('User ID must be a valid number.');
-            return;
-        }
-
-        const response = await axios.post(`${baseUrl}/books`, { title, author, user_id: userId });
+        const response = await axios.post(`${baseUrl}/books`, { title, author });
         console.log(response.data.message);
         fetchBooks();
     } catch (error) {
@@ -132,6 +141,18 @@ function deleteBook(bookId) {
                 console.error('Error deleting book:', error.response ? error.response.data.message : error.message);
             });
     }
+}
+
+// JavaScript for taking a book
+function takeBook() {
+    // Implement the logic for taking a book
+    console.log('Take Book button clicked');
+}
+
+// JavaScript for returning a book
+function returnBook() {
+    // Implement the logic for returning a book
+    console.log('Return Book button clicked');
 }
 
 // Attach event listeners to the forms

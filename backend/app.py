@@ -77,13 +77,15 @@ def login():
 @app.route('/books', methods=['GET'])
 @jwt_required()
 def get_all_books():
-    current_user = get_jwt_identity()
-    books = Book.query.filter_by(user_id=current_user).all()
+    # Remove the filtering based on current_user
+    books = Book.query.all()
+
     result = [
         {"id": book.id, "title": book.title, "author": book.author, "user_id": book.user_id}
         for book in books
     ]
     return jsonify(result)
+
 
 @app.route('/books', methods=['POST'])
 @jwt_required()
@@ -132,6 +134,48 @@ def delete_book(book_id):
         return jsonify({"message": "Book deleted successfully"})
     else:
         return jsonify({"message": "Book not found or unauthorized"}), 404
+    
+    # Add these new routes for taking and returning books
+# Modify these routes to remove @jwt_required() decorator
+
+@app.route('/take_book/<int:book_id>', methods=['POST'])
+def take_book(book_id):
+    current_user = get_jwt_identity()
+    user = User.query.get(current_user)
+    book = Book.query.get(book_id)
+
+    # Check if the user is not a librarian and the book exists
+    if not user.is_librarian and book:
+        # You may want to add additional checks here, such as checking if the book is available
+
+        # Assign the book to the current user
+        book.user_id = current_user
+        db.session.commit()
+        
+        return jsonify({"message": "Book taken successfully"}), 200
+    else:
+        return jsonify({"message": "Book not found or unauthorized"}), 404
+
+@app.route('/return_book/<int:book_id>', methods=['POST'])
+def return_book(book_id):
+    current_user = get_jwt_identity()
+    user = User.query.get(current_user)
+    book = Book.query.get(book_id)
+
+    # Check if the user is not a librarian and the book exists
+    if not user.is_librarian and book:
+        # Check if the current user has the book
+        if book.user_id == current_user:
+            # Return the book (set user_id to None)
+            book.user_id = None
+            db.session.commit()
+            
+            return jsonify({"message": "Book returned successfully"}), 200
+        else:
+            return jsonify({"message": "You do not have this book"}), 401
+    else:
+        return jsonify({"message": "Book not found or unauthorized"}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
