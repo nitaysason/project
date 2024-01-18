@@ -2,8 +2,9 @@ const baseUrl = 'http://localhost:5000'; // Update with your Flask app URL
 let authToken = null;
 let isLibrarian = false;
 
-function setAuthToken(token) {
+function setAuthToken(token, librarianStatus) {
     authToken = token;
+    isLibrarian = librarianStatus;
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 }
 
@@ -19,15 +20,23 @@ function showRegistrationForm() {
     document.getElementById('bookSection').style.display = 'none';
 }
 
+
 function showBookSection() {
     document.getElementById('loginForm').style.display = 'none';
     document.getElementById('registrationForm').style.display = 'none';
     document.getElementById('bookSection').style.display = 'block';
 
+    const userActions = document.getElementById('userActions');
+    const addBookForm = document.getElementById('addBookForm');
+    const bookList = document.getElementById('bookList');
+
     if (isLibrarian) {
-        document.getElementById('userActions').style.display = 'none';
-        document.getElementById('addBookForm').style.display = 'none';
+        userActions.style.display = 'none';
+        addBookForm.style.display = 'block';
     } else {
+        userActions.style.display = 'block';
+        addBookForm.style.display = 'none';
+
         const updateButtons = document.querySelectorAll('.update-button');
         const deleteButtons = document.querySelectorAll('.delete-button');
 
@@ -39,6 +48,9 @@ function showBookSection() {
             button.style.display = 'none';
         });
     }
+
+    // Fetch and display books for all users
+    fetchBooks();
 }
 
 function login() {
@@ -48,8 +60,7 @@ function login() {
     axios.post(`${baseUrl}/login`, { username, password })
         .then(response => {
             const { access_token, is_librarian } = response.data;
-            setAuthToken(access_token);
-            isLibrarian = is_librarian;
+            setAuthToken(access_token, is_librarian);
             showBookSection();
             fetchBooks();
         })
@@ -71,27 +82,28 @@ async function register() {
     }
 }
 
-function fetchBooks() {
-    axios.get(`${baseUrl}/books`)
-        .then(response => {
-            const bookList = document.getElementById('bookList');
-            bookList.innerHTML = '';
 
-            response.data.forEach(book => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <strong>ID:</strong> ${book.id} |
-                    <strong>Title:</strong> ${book.title} |
-                    <strong>Author:</strong> ${book.author} |
-                    ${isLibrarian ? '' : '<button class="update-button" onclick="updateBook(' + book.id + ')">Update</button>'} |
-                    ${isLibrarian ? '' : '<button class="delete-button" onclick="deleteBook(' + book.id + ')">Delete</button>'}
-                `;
-                bookList.appendChild(listItem);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching books:', error.response ? error.response.data.message : error.message);
+
+async function fetchBooks() {
+    try {
+        const response = await axios.get(`${baseUrl}/books`);
+        const bookList = document.getElementById('bookList');
+        bookList.innerHTML = '';
+
+        response.data.forEach(book => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <strong>ID:</strong> ${book.id} |
+                <strong>Title:</strong> ${book.title} |
+                <strong>Author:</strong> ${book.author} |
+                ${isLibrarian ? '<button class="update-button" onclick="updateBook(' + book.id + ')">Update</button>' : ''} |
+                ${isLibrarian ? '<button class="delete-button" onclick="deleteBook(' + book.id + ')">Delete</button>' : ''}
+            `;
+            bookList.appendChild(listItem);
         });
+    } catch (error) {
+        console.error('Error fetching books:', error.response ? error.response.data.message : error.message);
+    }
 }
 
 async function addBook() {

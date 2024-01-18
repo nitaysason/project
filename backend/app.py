@@ -4,8 +4,6 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask_bcrypt import Bcrypt
 
-
-
 app = Flask(__name__)
 CORS(app)
 bcrypt = Bcrypt(app)
@@ -27,13 +25,12 @@ class User(db.Model):
     is_librarian = db.Column(db.Boolean, default=False)
     books = db.relationship('Book', backref='user', lazy=True)
 
-
 # Book entity model
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     author = db.Column(db.String(100), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
 # Create tables
 with app.app_context():
@@ -42,8 +39,6 @@ with app.app_context():
 # Routes
 
 # User Routes
-
-
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -66,13 +61,9 @@ def login():
 
     if user and bcrypt.check_password_hash(user.password, data['password']):
         access_token = create_access_token(identity=user.id)
-        return jsonify({"message": "Login successful", "access_token": access_token}), 200
+        return jsonify({"message": "Login successful", "access_token": access_token, "is_librarian": user.is_librarian}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
-
-# Book Routes
-
-# Book Routes
 
 @app.route('/books', methods=['GET'])
 @jwt_required()
@@ -85,7 +76,6 @@ def get_all_books():
         for book in books
     ]
     return jsonify(result)
-
 
 @app.route('/books', methods=['POST'])
 @jwt_required()
@@ -134,8 +124,8 @@ def delete_book(book_id):
         return jsonify({"message": "Book deleted successfully"})
     else:
         return jsonify({"message": "Book not found or unauthorized"}), 404
-    
-    # Add these new routes for taking and returning books
+
+# Add these new routes for taking and returning books
 # Modify these routes to remove @jwt_required() decorator
 
 @app.route('/take_book/<int:book_id>', methods=['POST'])
@@ -175,10 +165,6 @@ def return_book(book_id):
             return jsonify({"message": "You do not have this book"}), 401
     else:
         return jsonify({"message": "Book not found or unauthorized"}), 404
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
 if __name__ == '__main__':
