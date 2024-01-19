@@ -16,7 +16,7 @@
         <div id="bookSection">
             <h2>Books</h2>
             <ul id="bookList"></ul>
-            <div id="addBookForm">
+            <div id="addBookForm" style="display: none;">
                 <h3>Add New Book</h3>
                 <label for="title">Title:</label>
                 <input type="text" id="title" required>
@@ -49,12 +49,7 @@
         </div>
 
         <!-- User Actions (Take/Return Book) -->
-        <div id="userActions" style="display: none;">
-            <!-- Replace "1" with the actual book ID you want to take -->
-            <button onclick="takeBook(3)">Take Book</button>
-            <!-- Replace "1" with the actual book ID you want to return -->
-            <button onclick="returnBook(1)">Return Book</button>
-        </div>
+        <div id="userActions" style="display: none;"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

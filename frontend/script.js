@@ -12,14 +12,15 @@ function showLoginForm() {
     document.getElementById('loginForm').style.display = 'block';
     document.getElementById('registrationForm').style.display = 'none';
     document.getElementById('bookSection').style.display = 'none';
+    document.getElementById('userActions').style.display = 'none';
 }
 
 function showRegistrationForm() {
     document.getElementById('loginForm').style.display = 'none';
     document.getElementById('registrationForm').style.display = 'block';
     document.getElementById('bookSection').style.display = 'none';
+    document.getElementById('userActions').style.display = 'none';
 }
-
 
 function showBookSection() {
     document.getElementById('loginForm').style.display = 'none';
@@ -36,17 +37,6 @@ function showBookSection() {
     } else {
         userActions.style.display = 'block';
         addBookForm.style.display = 'none';
-
-        const updateButtons = document.querySelectorAll('.update-button');
-        const deleteButtons = document.querySelectorAll('.delete-button');
-
-        updateButtons.forEach(button => {
-            button.style.display = 'none';
-        });
-
-        deleteButtons.forEach(button => {
-            button.style.display = 'none';
-        });
     }
 
     // Fetch and display books for all users
@@ -82,8 +72,6 @@ async function register() {
     }
 }
 
-
-
 async function fetchBooks() {
     try {
         const response = await axios.get(`${baseUrl}/books`);
@@ -98,6 +86,8 @@ async function fetchBooks() {
                 <strong>Author:</strong> ${book.author} |
                 ${isLibrarian ? '<button class="update-button" onclick="updateBook(' + book.id + ')">Update</button>' : ''} |
                 ${isLibrarian ? '<button class="delete-button" onclick="deleteBook(' + book.id + ')">Delete</button>' : ''}
+                ${!isLibrarian ? '<button class="take-button" onclick="takeBook(' + book.id + ')">Take Book</button>' : ''}
+                ${!isLibrarian ? '<button class="return-button" onclick="returnBook(' + book.id + ')">Return Book</button>' : ''}
             `;
             bookList.appendChild(listItem);
         });
@@ -105,6 +95,7 @@ async function fetchBooks() {
         console.error('Error fetching books:', error.response ? error.response.data.message : error.message);
     }
 }
+
 
 async function addBook() {
     try {
