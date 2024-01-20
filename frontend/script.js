@@ -155,6 +155,7 @@ function takeBook(bookId) {
         })
         .catch(error => {
             console.error('Error taking book:', error.response ? error.response.data.message : error.message);
+            alert('book alredy taken');
         });
 }
 
@@ -167,6 +168,7 @@ function returnBook(bookId) {
         })
         .catch(error => {
             console.error('Error returning book:', error.response ? error.response.data.message : error.message);
+            alert('You dont have the book');
         });
 }
 
