@@ -4,7 +4,8 @@ A simple library management system implemented using Flask, SQLAlchemy, and JWT 
 
 ## Overview
 
-This Flask application provides a basic library management system with user registration, login, and book management features. Users can register, log in, add books, update book details, and delete books. Librarians have additional privileges to take and return books on behalf of users.
+This Flask application provides a basic library management system with user registration, login, and book management features. Users can register, log in and take and return books.
+ Librarians can add books, update book details, and delete books. 
 
 ## Features
 
