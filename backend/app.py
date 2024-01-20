@@ -96,7 +96,7 @@ def add_book():
         return jsonify({"message": "Unauthorized to add books"}), 401
 
     data = request.get_json()
-    new_book = Book(title=data['title'], author=data['author'], user_id=current_user)
+    new_book = Book(title=data['title'], author=data['author'])
     db.session.add(new_book)
     db.session.commit()
     return jsonify({"message": "Book added successfully"}), 201
@@ -147,7 +147,7 @@ def take_book(book_id):
     # Check if the user is not a librarian and the book exists
     if not user.is_librarian and book:
         # Check if the book is available
-        # if book.user_id is None:
+        if book.user_id is None:
             # Assign the book to the current user
             book.user_id = current_user
 
@@ -158,8 +158,8 @@ def take_book(book_id):
             db.session.commit()
 
             return jsonify({"message": "Book taken successfully"}), 200
-        # else:
-        #     return jsonify({"message": "Book is already taken"}), 400
+        else:
+            return jsonify({"message": "Book is already taken"}), 400
     else:
         return jsonify({"message": "Book not found or unauthorized"}), 404
 
