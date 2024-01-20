@@ -81,10 +81,10 @@ async function fetchBooks() {
         response.data.forEach(book => {
             const listItem = document.createElement('li');
             listItem.innerHTML = `
-                <strong>ID:</strong> ${book.id} |
-                <strong>Title:</strong> ${book.title} |
-                <strong>Author:</strong> ${book.author} |
-                ${isLibrarian ? '<button class="update-button" onclick="updateBook(' + book.id + ')">Update</button>' : ''} |
+                <strong>ID:</strong> ${book.id} 
+                <strong>Title:</strong> ${book.title} 
+                <strong>Author:</strong> ${book.author} 
+                ${isLibrarian ? '<button class="update-button" onclick="updateBook(' + book.id + ')">Update</button>' : ''} 
                 ${isLibrarian ? '<button class="delete-button" onclick="deleteBook(' + book.id + ')">Delete</button>' : ''}
                 ${!isLibrarian ? '<button class="take-button" onclick="takeBook(' + book.id + ')">Take Book</button>' : ''}
                 ${!isLibrarian ? '<button class="return-button" onclick="returnBook(' + book.id + ')">Return Book</button>' : ''}
