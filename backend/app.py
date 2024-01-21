@@ -110,13 +110,18 @@ def update_book(book_id):
 
     # Check if the current user is a librarian and the book exists
     if user.is_librarian and book:
-        data = request.get_json()
-        book.title = data['title']
-        book.author = data['author']
-        db.session.commit()
-        return jsonify({"message": "Book updated successfully"})
+        # Check if the book is currently taken by any user
+        if book.user_id is None:
+            data = request.get_json()
+            book.title = data['title']
+            book.author = data['author']
+            db.session.commit()
+            return jsonify({"message": "Book updated successfully"})
+        else:
+            return jsonify({"message": "Cannot update the book. It is currently taken by a user."}), 400
     else:
         return jsonify({"message": "Book not found or unauthorized"}), 404
+
 
 @app.route('/books/<int:book_id>', methods=['DELETE'])
 @jwt_required()
@@ -127,9 +132,13 @@ def delete_book(book_id):
 
     # Check if the current user is a librarian and the book exists
     if user.is_librarian and book:
-        db.session.delete(book)
-        db.session.commit()
-        return jsonify({"message": "Book deleted successfully"})
+        # Check if the book is currently taken by any user
+        if book.user_id is None:
+            db.session.delete(book)
+            db.session.commit()
+            return jsonify({"message": "Book deleted successfully"})
+        else:
+            return jsonify({"message": "Cannot delete the book. It is currently taken by a user."}), 400
     else:
         return jsonify({"message": "Book not found or unauthorized"}), 404
 

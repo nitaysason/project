@@ -129,6 +129,7 @@ function updateBook(bookId) {
         })
         .catch(error => {
             console.error('Error updating book:', error.response ? error.response.data.message : error.message);
+            alert(' Cannot update the book. It is currently taken by a user');
         });
 }
 
@@ -142,6 +143,7 @@ function deleteBook(bookId) {
             })
             .catch(error => {
                 console.error('Error deleting book:', error.response ? error.response.data.message : error.message);
+                alert(' Cannot delete the book. It is currently taken by a user');
             });
     }
 }
